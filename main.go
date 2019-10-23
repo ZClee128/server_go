@@ -1,6 +1,9 @@
 package main
 
 import "github.com/gin-gonic/gin"
+import "fmt"
+import "io/ioutil"
+import "encoding/json"
 
 func main()  {
 	r := gin.Default()
@@ -14,12 +17,15 @@ func main()  {
 		})
 	})
 	r.POST("/Login", func(c *gin.Context) {
-		username := c.PostForm("username")
-		password := c.PostForm("password")
+		data, _ := ioutil.ReadAll(c.Request.Body)
+		fmt.Printf("ctx.Request.body: %v", string(data))
+		var d map[string]interface{}
+		// 将字符串反解析为字典
+		json.Unmarshal(data, &d)
+		fmt.Println(d)   
 		c.JSON(200, gin.H{
 			"code":  "0",
-			"username": username,
-			"password": password,
+			"data": d,
 		})
 	})
 	r.Run() 
